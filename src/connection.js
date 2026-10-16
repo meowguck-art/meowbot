@@ -4,7 +4,7 @@
 // WhatsApp > Linked devices > Link with phone number.
 // The pairing code is requested ~3s after the socket connects -
 // requesting it earlier fails with 428 (socket not ready yet).
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, Browsers } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const cfg = require('./config');
 const { t, lang } = require('./i18n');
@@ -40,7 +40,10 @@ async function start({ onMessage, onUpdate }) {
     auth: state,
     logger: pino({ level: 'silent' }),
     printQRInTerminal: false, // pairing code only, no QR
-    browser: ['MeowBot', 'Chrome', '1.0'],
+    // NOTE: a custom browser string (e.g. ['MeowBot', ...]) makes WhatsApp
+    // answer "Couldn't link device" on pairing - same as shirbot 2026-10-02.
+    // Browsers.ubuntu('Chrome') is the known-good spoof.
+    browser: Browsers.ubuntu('Chrome'),
   });
 
   sock.ev.on('creds.update', saveCreds);
