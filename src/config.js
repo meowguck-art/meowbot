@@ -1,6 +1,11 @@
 // Central configuration. Every value comes from the environment (.env).
 // Nothing secret is hardcoded anywhere in the codebase.
-require('dotenv').config();
+//
+// override:true is REQUIRED, not optional: Termux exports its own $PREFIX
+// (/data/data/com.termux/files/usr) and dotenv will not overwrite existing
+// env vars by default - without this, the bot thinks the command prefix is
+// a filesystem path and no !command is ever recognized.
+require('dotenv').config({ override: true });
 const fs = require('fs');
 
 const toBool = (v, d) => (v === undefined || v === '' ? d : ['1', 'true', 'yes', 'on'].includes(String(v).toLowerCase()));
