@@ -156,6 +156,9 @@ async function onMessage(sock, msg) {
     }
     ctx.args = args;
 
+    // Debug: who sent what, and the auth decision (helps silent-ignore cases).
+    console.log(`[MeowBot] cmd "${cmd.id}" from ${ctx.senderPart} (fromMe=${ctx.isFromMe} isGroup=${ctx.isGroup})`);
+
     // 6. gates
     if (cmd.gate === 'owner' && !ctx.isOwner) {
       await ctx.reply(t('common.ownerOnly'));
@@ -174,6 +177,7 @@ async function onMessage(sock, msg) {
       }
     }
     const authorized = await isAuthorized(ctx.senderPart, ctx.chatJid, ctx.isOwner, ctx.isGroup);
+    console.log(`[MeowBot] -> isOwner=${ctx.isOwner} authorized=${authorized} gate=${cmd.gate || 'all'}`);
     if (!authorized) return; // silent, like the original
     ctx.authorized = authorized;
 
